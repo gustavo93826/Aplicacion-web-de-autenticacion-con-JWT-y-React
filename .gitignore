@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Base de datos local
+/data/
+
+# Permitimos subir SOLO la plantilla sin valores reales
+!.env.example
