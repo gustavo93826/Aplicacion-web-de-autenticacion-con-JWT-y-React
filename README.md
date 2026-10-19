@@ -78,7 +78,7 @@ Aplicación web full-stack con **registro, inicio de sesión y gestión de usuar
 
 ## 🚀 Cómo ejecutarlo en local
 
-**Requisitos:** Node.js **20.9 o superior** y npm.
+**Requisitos:** Node.js **20.9 o superior** (probado con Node 22) y npm. No necesitas compiladores: `better-sqlite3` se instala con un binario precompilado.
 
 ```bash
 # 1. Clonar e instalar
@@ -231,6 +231,7 @@ Si usas `DATABASE_PATH` en `.env.local`, añade `--env-file=.env.local` después
 - **CSP parcial**: solo las directivas que no afectan a los scripts. Una CSP estricta exigiría *nonces*.
 - **SQLite necesita un disco persistente y una sola instancia** (ver [Despliegue](#️-despliegue)).
 - **No hay pruebas automáticas todavía.**
+-- **`better-sqlite3` está fijado en la 12.11.1** por un fallo de instalación de la 13.x en Windows. Se revisará cuando se corrija en una versión posterior.
 
 ## 📦 Seguridad de dependencias
 
@@ -274,6 +275,13 @@ SQLite guarda los datos en **un archivo**, así que la aplicación necesita:
 - Por qué la validación del servidor es la que cuenta y la del formulario es una cortesía.
 - Cómo **dos capas de protección** evitan depender de una sola barrera.
 - Que un aviso de seguridad (`npm audit`) es una pista que hay que evaluar, no un veredicto.
+
+
+## 🩺 Solución de problemas
+
+**Windows: `gyp ERR! find VS` o `Could not find any Visual Studio installation` al hacer `npm install`**
+
+Es un fallo conocido de `better-sqlite3` 13.x en Windows: npm intenta compilarlo en lugar de usar el binario incluido. Por eso este proyecto fija `better-sqlite3` en la versión exacta **12.11.1**, que descarga un binario precompilado. No cambies esa versión. Si el error persiste, comprueba que tu red permite descargar desde `github.com`.
 
 ## 👤 Autor
 
