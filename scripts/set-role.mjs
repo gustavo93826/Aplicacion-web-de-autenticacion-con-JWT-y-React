@@ -16,7 +16,9 @@ if (!email || !VALID_ROLES.includes(role)) {
   process.exit(1); // un número distinto de 0 significa "terminó con error"
 }
 
-const dbPath = path.join(process.cwd(), "data", "app.db");
+const dbPath = process.env.DATABASE_PATH
+  ? path.resolve(process.env.DATABASE_PATH)
+  : path.join(process.cwd(), "data", "app.db");
 
 // fileMustExist: si el archivo no existe, falla en vez de crear una BD vacía.
 const db = new Database(dbPath, { fileMustExist: true });

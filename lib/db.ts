@@ -4,11 +4,15 @@ import fs from "node:fs";
 import path from "node:path";
 
 // 1) ¿DÓNDE VIVE EL ARCHIVO?
-// process.cwd() es la carpeta raíz del proyecto.
-// La base de datos será: <proyecto>/data/app.db
-const dataDir = path.join(process.cwd(), "data");
-fs.mkdirSync(dataDir, { recursive: true }); // crea la carpeta si no existe
-const dbPath = path.join(dataDir, "app.db");
+// En producción, el servidor puede indicar otra ubicación (un disco persistente)
+// con la variable DATABASE_PATH. Si no existe, usamos ./data/app.db
+const configuredPath = process.env.DATABASE_PATH?.trim();
+const dbPath = configuredPath
+  ? path.resolve(configuredPath)
+  : path.join(process.cwd(), "data", "app.db");
+
+// Creamos la carpeta que contiene el archivo, si no existe.
+fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 
 // 2) ABRIR LA PUERTA Y PREPARAR EL ARCHIVADOR
 function createConnection() {
