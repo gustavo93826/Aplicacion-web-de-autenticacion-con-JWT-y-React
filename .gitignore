@@ -45,3 +45,7 @@ next-env.d.ts
 
 # Permitimos subir SOLO la plantilla sin valores reales
 !.env.example
+
+
+# Copias de seguridad de la base de datos (contienen datos de usuarios)
+/backups/

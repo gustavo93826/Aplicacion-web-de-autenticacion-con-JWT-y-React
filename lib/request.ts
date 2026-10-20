@@ -16,6 +16,28 @@ export function getClientIp(request: Request): string {
 }
 
 // ¿La petición viene de NUESTRA propia web? (defensa extra contra CSRF)
+// ¿Qué dirección consideramos "nuestra"?
+// - Si existe APP_URL (la URL pública), usamos esa: es lo más fiable detrás de un proxy.
+// - Si no, usamos las cabeceras de la propia petición (válido en local).
+function getExpectedHost(request: Request): string | undefined {
+  const appUrl = process.env.APP_URL?.trim();
+
+  if (appUrl) {
+    try {
+      return new URL(appUrl).host;
+    } catch {
+      // APP_URL mal escrita: no rompemos nada, usamos las cabeceras.
+    }
+  }
+
+  return (
+    request.headers.get("x-forwarded-host") ?? request.headers.get("host")
+  )
+    ?.split(",")[0]
+    ?.trim();
+}
+
+// ¿La petición viene de NUESTRA propia web? (defensa extra contra CSRF)
 export function isTrustedRequest(request: Request): boolean {
   // Sec-Fetch-Site: el navegador declara desde dónde sale la petición.
   // "none" significa que la inició la propia persona (por ejemplo, escribiendo la URL).
@@ -27,14 +49,8 @@ export function isTrustedRequest(request: Request): boolean {
   // Origin: la web de origen. Debe coincidir con nuestro propio host.
   const origin = request.headers.get("origin");
   if (origin) {
-    const host = (
-      request.headers.get("x-forwarded-host") ?? request.headers.get("host")
-    )
-      ?.split(",")[0]
-      ?.trim();
-
     try {
-      return new URL(origin).host === host;
+      return new URL(origin).host === getExpectedHost(request);
     } catch {
       return false; // un Origin que no se puede interpretar es sospechoso
     }

@@ -4,12 +4,25 @@ import fs from "node:fs";
 import path from "node:path";
 
 // 1) ¿DÓNDE VIVE EL ARCHIVO?
+// Mientras Next.js COMPILA ("next build") importa este archivo para analizarlo,
+// pero no debe tocar la base de datos real: en muchos servidores el disco
+// persistente solo existe al ARRANCAR la app, no al compilarla.
+// En esa fase usamos una base de datos temporal en memoria.
+const isBuildPhase = process.env.NEXT_PHASE === "phase-production-build";
+
 // En producción, el servidor puede indicar otra ubicación (un disco persistente)
 // con la variable DATABASE_PATH. Si no existe, usamos ./data/app.db
 const configuredPath = process.env.DATABASE_PATH?.trim();
-const dbPath = configuredPath
-  ? path.resolve(configuredPath)
-  : path.join(process.cwd(), "data", "app.db");
+const dbPath = isBuildPhase
+  ? ":memory:"
+  : configuredPath
+    ? path.resolve(configuredPath)
+    : path.join(process.cwd(), "data", "app.db");
+
+// Creamos la carpeta que contiene el archivo, si no existe (salvo durante el build).
+if (!isBuildPhase) {
+  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+}
 
 // Creamos la carpeta que contiene el archivo, si no existe.
 fs.mkdirSync(path.dirname(dbPath), { recursive: true });
