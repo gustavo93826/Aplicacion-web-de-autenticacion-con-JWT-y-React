@@ -82,8 +82,8 @@ Aplicación web full-stack con **registro, inicio de sesión y gestión de usuar
 
 ```bash
 # 1. Clonar e instalar
-git clone https://github.com/<gustavo93826>/<Aplicacion-web-de-autenticacion-con-JWT-y-React>.git
-cd <Aplicacion-web-de-autenticacion-con-JWT-y-React>
+git clone https://github.com/gustavo93826/Aplicacion-web-de-autenticacion-con-JWT-y-React.git
+cd Aplicacion-web-de-autenticacion-con-JWT-y-React
 npm install
 
 # 2. Crear el archivo de variables de entorno
@@ -122,6 +122,11 @@ Si usas `DATABASE_PATH` en `.env.local`, añade `--env-file=.env.local` después
 | `npm run dev` | Servidor de desarrollo |
 | `npm run build` | Compila para producción |
 | `npm run start` | Sirve la versión compilada |
+| `npm test` | Compila y ejecuta las pruebas de integración |
+
+### Pruebas automatizadas
+
+`npm test` levanta la aplicación compilada con una base SQLite temporal y verifica tres flujos de la API: registro, inicio de sesión y permisos de administrador. No modifica `data/app.db` ni necesita servicios externos.
 
 ## 🧪 Flujo de demostración
 
@@ -230,7 +235,7 @@ Si usas `DATABASE_PATH` en `.env.local`, añade `--env-file=.env.local` después
 - **Sin verificación de email, recuperación de contraseña ni 2FA.**
 - **CSP parcial**: solo las directivas que no afectan a los scripts. Una CSP estricta exigiría *nonces*.
 - **SQLite necesita un disco persistente y una sola instancia** (ver [Despliegue](#️-despliegue)).
-- **No hay pruebas automáticas todavía.**
+- **Las pruebas automatizadas cubren los flujos principales de la API**; todavía no hay pruebas de interfaz ni cobertura completa de todas las reglas de negocio.
 -- **`better-sqlite3` está fijado en la 12.11.1** por un fallo de instalación de la 13.x en Windows. Se revisará cuando se corrija en una versión posterior.
 
 ## 📦 Seguridad de dependencias
